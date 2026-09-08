@@ -1,0 +1,32 @@
+{
+    "CambiosChaco": {
+        "USD": {
+            "name": "USD",
+            "buy": "5900",
+            "sell": "5960",
+            "buy_trend": 0,
+            "sell_trend": 0,
+            "exchange_type": "cash"
+        }   
+    },
+    "MyD": {
+        "USD": {
+            "name": "USD",
+            "buy": "5910",
+            "sell": "5955",
+            "buy_trend": 1,
+            "sell_trend": -1,
+            "exchange_type": "cash"
+        }
+    },
+    "Ueno": {
+        "USD": {
+            "name": "USD-tu app",
+            "buy": "5900",
+            "sell": "6030",
+            "buy_trend": null,
+            "sell_trend": null,
+            "exchange_type": "app"
+        }
+    }
+}
