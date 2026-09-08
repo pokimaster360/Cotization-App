@@ -11,18 +11,14 @@ def print_houses(houses):
     for currency_id, data in houses.items():
         print(f"\n{currency_id.upper()} | {data['name']}")
         print("-" * 50)
-        print(f"  Compra : {data['buy']:>8}  [{data['buy_trend']}]")
-        print(f"  Venta  : {data['sell']:>8}  [{data['sell_trend']}]")
+        print(f"  buy : {data['buy']:>8}  [{data['buy_trend']}]")
+        print(f"  sell  : {data['sell']:>8}  [{data['sell_trend']}]")
 
     print("=" * 50)
 
 
 
-# print_houses(cotizations['Cambios-Chaco'])
-# pprint(cotizations,width=15, compact=False,depth= 10, indent=5, sort_dicts=False)
 
-
-print('Iniciando...')
 
 
 

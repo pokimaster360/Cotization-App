@@ -3,8 +3,8 @@ import re
 import requests
 from bs4 import BeautifulSoup
 
-from app.models.Currency import Currency
-from app.models.ExchangeType import ExchangeType
+from app.models.currency import Currency
+from app.models.exchange_type import ExchangeType
 
 
 def parse_price(value: str) -> int:

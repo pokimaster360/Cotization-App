@@ -14,7 +14,7 @@ from pprint import pprint
 # for path in sys.path:
 #     print("  ", path)
 
-from app.models.Currency import Currency
+from app.models.currency import Currency
 from app.models import Trend
 
 

@@ -1,5 +1,5 @@
 from pathlib import Path
-from app.models.Currency import Currency
+from app.models.currency import Currency
 import json
 
 

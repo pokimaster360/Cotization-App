@@ -1,4 +1,4 @@
-from app.models.Currency import Currency
+from app.models.currency import Currency
 from app.models.Trend import Trend
 
 from dataclasses import asdict

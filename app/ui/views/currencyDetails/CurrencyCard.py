@@ -1,6 +1,6 @@
 import flet as ft
 
-from app.models.Currency import Currency
+from app.models.currency import Currency
 from app.models.Trend import Trend
 
 class CurrencyCard:

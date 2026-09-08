@@ -5,7 +5,7 @@ import json
 
 
 
-from app.models.Currency import Currency
+from app.models.currency import Currency
 import app.models.Trend as Trend
 
 
