@@ -1,9 +1,9 @@
 from pathlib import Path
 from app.models.currency import Currency
-import json
 
 
-from app.services.currency_conversion import ConvertCurrencies
+# from app.services.currency_conversion import ConvertCurrencies
+from app.repositories.currency import CurrencyRepository
 
 
 FILE_DIR = Path(__file__).resolve()
@@ -13,12 +13,11 @@ DATA_DIR = BASE_DIR / 'data' / 'market-rates.json'
 
 
 
-def GetData() -> dict:
-
-    with open(DATA_DIR, 'r', encoding= 'utf-8') as file:
-        database = json.load(file)
-
-    database = ConvertCurrencies(database)    
+repository = CurrencyRepository()
 
 
-    return database
+def GetAllData() -> list[Currency]:
+    return repository.get_all()
+
+def GetLatestData() -> dict[tuple[str,str], Currency]:
+    return repository.get_current()

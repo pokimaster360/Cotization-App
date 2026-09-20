@@ -1,7 +1,7 @@
 from app.ui.App import App
+from app.data.connection import initialize_database
 import flet as ft
 
-from app.services.getData import GetData
 
 def print_houses(houses):
     print("=" * 50)
@@ -22,8 +22,13 @@ def print_houses(houses):
 
 
 
+def main():
+    initialize_database()
+
+    app = App()
+
+    ft.run(main=app.main, assets_dir= 'app/assets')
 
 
-app = App(GetData())
-
-ft.run(main=app.main, assets_dir= 'assets')
+if __name__ == '__main__':
+    main()

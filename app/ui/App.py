@@ -2,15 +2,19 @@ import flet as ft
 from pathlib import Path
 
 # Services
-from app.services.getData import GetData
+from app.services.getData import GetLatestData
 from app.services.ScrapService import UpdteData
 
 
-# UI
-from app.ui.views.mainPage.CurrencyCard import CurrencyCard
+# Models
+from app.models.currency import Currency
 
-from app.ui.views.mainPage.build import MainPage
-from app.ui.views.currencyDetails.build import CurrencyPage
+
+# UI
+from app.ui.views.main_page.CurrencyCard import CurrencyCard
+
+from app.ui.views.main_page.build import MainPage
+from app.ui.views.currency_details.build import CurrencyPage
 
 
 
@@ -31,11 +35,18 @@ CURRENCY_ORDER = [
 
 
 
+debugging = False
+
+
+
 
 class App:
-    def __init__(self, currencies: dict) -> None:
+    def __init__(self) -> None:
         self.page = None
-        self.currencies = currencies
+        self.currencies: dict[tuple[str, str], Currency] = GetLatestData()      #("MyD","USD") = Currency
+        self.actual_page = 'main'
+
+        if debugging: print(f'File: {__file__} | Obtained Data: {self.currencies}')
 
     def main(self, page: ft.Page):
         self.page = page
@@ -45,8 +56,8 @@ class App:
 
 
         self.config_page()
-        self.show_main_page()
-        # self.show_currency('USD')
+        # self.show_main_page()
+        self.show_currency('USD')
 
 
 
@@ -68,7 +79,7 @@ class App:
 
         main_content = MainPage().build()
 
-        total_currencies = self.total_currencies()
+        total_currencies = self.available_currencies()
 
         column = ft.Column(
             scroll=ft.ScrollMode.AUTO,
@@ -115,33 +126,36 @@ class App:
         page.update()
 
     
-    def show_currency(self, currency, arg = None):
+    def show_currency(self, currency_to_show, arg = None):
         if self.page is None:
             return
 
 
         self.page.clean()
-
+        self.actual_page = 'currency'
 
         if arg == 'reload':
             UpdteData()
-            self.currencies = GetData()
+            self.currencies = GetLatestData()
+
+            if debugging: print(f'File: {__file__} | Obtained Data: {self.currencies}')
 
         
         currency_fromAll_houses = {}
 
-        for house in self.currencies:
-            data = self.get_currency_from_house(house, currency)
+        for house in self.available_houses():         #("MyD","USD") = Currency
+            # print(house)
+            data = self.house_data(house, currency_to_show)
             # print(data, house)
             if data is None:
-                # print(house, self.get_currency_from_house(house, currency))
+                print(f'Trying to show Currency Page, but - Row - Data is None: {house} |  {__file__}')
                 
                 continue
 
-            currency_fromAll_houses[house] = self.get_currency_from_house(house, currency)
+            currency_fromAll_houses[house] = data
 
 
-        main_content = CurrencyPage().build(currency, currency_fromAll_houses, self.show_main_page, self.show_currency)
+        main_content = CurrencyPage().build(self.page, currency_to_show, currency_fromAll_houses, self.show_main_page, self.show_currency)
 
 
         self.page.add(main_content)
@@ -157,20 +171,24 @@ class App:
     # HELPERS
     # --------------------------------------------------------
 
-    
-    def get_currency_from_house(self,house, currency):
-        if house in self.currencies and currency in self.currencies[house]:
-            return self.currencies[house][currency]
-        else:
-            return None
+    # get Currency from a House with a Specific Currency: USD, EUR..
+    def house_data(self,house, currency) -> Currency | None:
+        '''
+        Gets the Currency Data, from a especific House, and his specific currency
+        '''
 
+        return self.currencies.get((house, currency))
 
-    def total_currencies(self) -> list[str]:
+    # All the total Currencies that are Available, USD, EUR etc
+    def available_currencies(self) -> list[str]:
+        '''
+        Gets all available Houses in the Database
+        '''
         available = set()
 
 
-        for exchange_house in self.currencies.values():
-            available.update(exchange_house.keys())
+        for exchange_house in self.currencies:      # ("Ueno", "USD") = Currency
+            available.update(exchange_house[1])
 
         available= sorted(available)
 
@@ -192,22 +210,33 @@ class App:
         
         return new_order
 
+    # All The Houses that are in the DataBase Currently
+    def available_houses(self) -> list[str]:
+        available = set()
+
+        for exchange_house in self.currencies:
+            # print(exchange_house[0])
+            available.update([exchange_house[0]])
+
+        return list(available)
 
     def config_page(self):
-            if self.page == None:
-                return
+        if self.page == None:
+            return
 
-            
-            self.page.title = 'Market Quotes'
-            self.page.padding = 20
-            self.page.theme_mode = ft.ThemeMode.DARK
+        
+        self.page.title = 'Market Quotes'
+        # self.page.padding = 20
+        self.page.theme_mode = ft.ThemeMode.DARK
 
-            self.page.window.height = 800
-            self.page.window.width = 1200
+        self.page.window.height = 800
+        self.page.window.width = 1200
 
-            self.page.window.maximized = True
+        self.page.window.maximized = True
 
-            self.page.window.icon = 'icons/MainIcon.ico'
+        self.page.window.icon = 'icons/MainIcon.ico'
+
+        self.page.window.update()
         
 
 

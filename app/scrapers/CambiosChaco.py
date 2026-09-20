@@ -104,6 +104,7 @@ def get_cotization(url= 'https://www.cambioschaco.com.py/'):
 
 
             currencys[currency] = Currency(
+                house= 'CambiosChaco',
                 name= currency,
                 buy= buy_value,
                 sell= sell_value,

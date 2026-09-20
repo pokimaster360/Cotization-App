@@ -4,6 +4,8 @@ import requests
 from bs4 import BeautifulSoup
 
 from app.models.currency import Currency
+from app.models.Trend import normalize_trend
+from app.models.Trend import Trend
 from app.models.exchange_type import ExchangeType
 
 
@@ -16,7 +18,7 @@ def parse_price(value: str) -> int:
     return int(numbers)
 
 
-
+debugging = False
 
 
 
@@ -104,10 +106,11 @@ def get_cotization(
 
 
             currencies[currency] = Currency(
+                house= 'Ueno',
                 name=currency,  #type: ignore
                 buy=buy,
                 sell=sell,
-                buy_trend=None,
+                buy_trend= None,
                 sell_trend=None,
                 exchange_type= exchange_type
             )
@@ -129,15 +132,23 @@ def get_cotization(
 
 
         # Agarra el mas grande entre USD-app y USD-cash y solo deja en currencies como USD
+
         if usd_cash in currencies and usd_app in currencies:
             usd_app_value = currencies.pop(usd_app)
             usd_cash_value = currencies.pop(usd_cash)
 
 
+            if debugging: print('Ueno Scraper:', usd_app_value)
+
+            
             if usd_app_value.buy > usd_cash_value.buy:
+                if debugging: print('Renaming')
+
+                usd_app_value.name = 'USD'
                 currencies['USD'] = usd_app_value
 
             else:
+                usd_cash_value.name = 'USD'
                 currencies['USD'] = usd_cash_value
 
 

@@ -1,12 +1,11 @@
 from pathlib import Path
 import importlib.util
-from dataclasses import dataclass, asdict
+# from dataclasses import dataclass, asdict
 
 
-from app.services.currency_conversion import Currencies_To_Dic
+# from app.services.currency_conversion import Currencies_To_Dic
+from app.repositories.currency import CurrencyRepository
 
-
-import json
 
 
 
@@ -22,6 +21,15 @@ SCRAPERS_DIR = BASE_DIR / 'scrapers'
 
 
 
+
+
+
+repository = CurrencyRepository()
+
+
+
+
+
 def UpdteData():
     '''
     It Updates the data from data/market-rates.json, within all the house exchanges from obtain_exchanges
@@ -31,6 +39,7 @@ def UpdteData():
 
 
     houses = {}
+    currencies = {}
 
 
     carpeta = SCRAPERS_DIR
@@ -62,31 +71,32 @@ def UpdteData():
         if hasattr(modulo, 'get_cotization'):
             currencies = modulo.get_cotization()
 
+            # print(modulo, currencies)
 
-            currencies = {
-                'USD': currencies['USD']
-            }
-
-
-            currencies = Currencies_To_Dic(currencies)
+            if currencies is not None:
+                currencies = {
+                    'USD': currencies['USD'],
+                    'EUR': currencies['EUR'],
+                }
+            else:
+                print(f'Empty Currencies Dict: {modulo}, ScrapService File: {__file__}')
+                currencies = {}
 
 
             houses[archivo.stem] = currencies
+            # print(houses)
 
             
         else:
             print(f'module: {modulo} unkown Function while Scraping {__file__}')
 
 
-    with open(DATA_DIR, 'w', encoding= 'utf-8') as file:
-            
 
-        # for key, currency in currencys.items():
-        #     print("KEY:", key)
-        #     print("VALUE:", currency)
-        #     print("TYPE:", type(currency))
+    for currencies in houses.values():
+        for currency in currencies.values():
+            # print(currency)
+            repository.save(currency)
 
-        json.dump(houses, file, indent= 4, ensure_ascii= False)
 
-        if debugging:
-            print('dumpeado')
+    if debugging:
+        print('dumpeado')

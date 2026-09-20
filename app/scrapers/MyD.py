@@ -101,6 +101,7 @@ def get_cotization(url='https://www.mydcambios.com.py/'):
                         # }
 
                         result[moneda] = Currency(
+                            house= 'MyD',
                             name= moneda,
                             buy= buy_value,
                             sell= sell_value,
